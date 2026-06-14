@@ -7,6 +7,9 @@ import pe.edu.upc.ideaforgev1.navigation.AppNavHost
 import pe.edu.upc.ideaforgev1.ui.theme.IdeaForgev1Theme
 
 class MainActivity : ComponentActivity() {
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
