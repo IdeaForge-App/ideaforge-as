@@ -19,7 +19,7 @@ val mainTabs = listOf(
     ),
     MainTab(
         route = Routes.CREATE_IDEA,
-        label = "Create",
+        label = "Create Idea",
         icon = "+"
     ),
     MainTab(

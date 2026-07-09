@@ -44,6 +44,13 @@ fun CreateIdeaScreen(
 
     val state = viewModel.uiState
 
+    val isTitleError = title.isEmpty()
+    val isDescriptionError = description.isEmpty()
+    val isCategoryError = category.isEmpty()
+    val isRolesError = selectedRoles.isEmpty()
+
+    val canPublish = !isTitleError && !isDescriptionError && !isCategoryError && !isRolesError && !state.isLoading
+
     val availableRoles = listOf(
         "Developer",
         "Design",
@@ -69,7 +76,7 @@ fun CreateIdeaScreen(
                 )
 
                 Text(
-                    text = "Publish a project idea and find people to build with.",
+                    text = "Publish a project idea and find people to build with. Fields with * are mandatory.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 4.dp)
@@ -91,34 +98,50 @@ fun CreateIdeaScreen(
                     OutlinedTextField(
                         value = title,
                         onValueChange = { title = it },
-                        label = { Text("Idea title") },
+                        label = { Text("Idea title *") },
                         placeholder = { Text("Example: StudyBuddy") },
                         modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
+                        singleLine = true,
+                        isError = title.isNotBlank() && isTitleError,
+                        supportingText = {
+                            if (title.isBlank()) {
+                                Text("Title is required", style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
                     )
 
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
-                        label = { Text("Short description") },
+                        label = { Text("Short description *") },
                         placeholder = { Text("Describe your idea in one or two lines") },
                         modifier = Modifier.fillMaxWidth(),
-                        minLines = 3
+                        minLines = 3,
+                        supportingText = {
+                            if (description.isBlank()) {
+                                Text("Description is required", style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
                     )
 
                     OutlinedTextField(
                         value = category,
                         onValueChange = { category = it },
-                        label = { Text("Category") },
+                        label = { Text("Category *") },
                         placeholder = { Text("TECHNOLOGY, EDUCATION, BUSINESS, SOCIAL...") },
                         modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
+                        singleLine = true,
+                        supportingText = {
+                            if (category.isBlank()) {
+                                Text("Category is required", style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
                     )
 
                     OutlinedTextField(
                         value = problem,
                         onValueChange = { problem = it },
-                        label = { Text("Problem") },
+                        label = { Text("Problem (Optional)") },
                         placeholder = { Text("What problem does your idea solve?") },
                         modifier = Modifier.fillMaxWidth(),
                         minLines = 2
@@ -127,18 +150,27 @@ fun CreateIdeaScreen(
                     OutlinedTextField(
                         value = solution,
                         onValueChange = { solution = it },
-                        label = { Text("Solution") },
+                        label = { Text("Solution (Optional)") },
                         placeholder = { Text("How would your idea solve it?") },
                         modifier = Modifier.fillMaxWidth(),
                         minLines = 2
                     )
 
-                    Text(
-                        text = "Required roles",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
+                    Column {
+                        Text(
+                            text = "Required roles *",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = if (isRolesError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                        if (isRolesError) {
+                            Text(
+                                text = "Select at least one role",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
 
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -191,7 +223,7 @@ fun CreateIdeaScreen(
                                 }
                             )
                         },
-                        enabled = !state.isLoading,
+                        enabled = canPublish,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 8.dp),
