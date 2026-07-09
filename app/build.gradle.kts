@@ -43,6 +43,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
+    implementation(libs.androidx.security.crypto)
+    debugImplementation(libs.okhttp.logging.interceptor)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)

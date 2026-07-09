@@ -1,4 +1,4 @@
-﻿package pe.edu.upc.ideaforgev1.features.ideas.presentation
+package pe.edu.upc.ideaforgev1.features.ideas.presentation
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pe.edu.upc.ideaforgev1.core.data.fake.FakeData
-import pe.edu.upc.ideaforgev1.core.data.local.SessionManager
+import pe.edu.upc.ideaforgev1.features.auth.domain.repository.SessionStore
 import pe.edu.upc.ideaforgev1.features.ideas.data.remote.dto.CreateIdeaRequestDto
 import pe.edu.upc.ideaforgev1.features.ideas.data.remote.dto.CreateRequiredRoleRequestDto
 import pe.edu.upc.ideaforgev1.features.ideas.data.repository.IdeaRepositoryImpl
@@ -16,7 +16,8 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class IdeaViewModel(
-    private val repository: IdeaRepository = IdeaRepositoryImpl()
+    private val repository: IdeaRepository = IdeaRepositoryImpl(),
+    private val sessionStore: SessionStore? = null
 ) : ViewModel() {
 
     var uiState by mutableStateOf(IdeaUiState())
@@ -31,14 +32,14 @@ class IdeaViewModel(
         roles: List<String>,
         onSuccess: () -> Unit
     ) {
-        if (!SessionManager.isLoggedIn()) {
+        if (sessionStore?.isLoggedIn() != true) {
             uiState = uiState.copy(
                 errorMessage = "You must log in before creating an idea."
             )
             return
         }
 
-        val creatorProfileId = SessionManager.profileId
+        val creatorProfileId = sessionStore?.profileId
 
         if (creatorProfileId == null) {
             uiState = uiState.copy(
